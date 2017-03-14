@@ -39,6 +39,7 @@ tester.bind("plotselected", function (event, ranges) {
 	var resultObj = Solvers.levenbergMarquardt(inputObj,testModel);
 
 	console.log(resultObj.solution);
+	console.log("selection mode " + myPlot.getOptions().selection.mode);
 	var Y2 = Matrixs.make((new nls(resultObj.solution)).fnc(XS))
 
 	var full1 = [];
@@ -49,14 +50,24 @@ tester.bind("plotselected", function (event, ranges) {
 	for (var i = 0; i < xf1.length; i++) {
 		full1.push([xf1[i],yf1[i]]);
 	}
-	$.plot(tester, [full, full1], options);
+	myPlot.setData([full, full1]);
+	myPlot.clearSelection();
+	myPlot.draw()
 
 });
 
 var options = {
 	selection: {
-		mode: "x"
+		mode: "xy"
 	}
 };
 
-$.plot(tester, [full],options);
+var myPlot = $.plot(tester, [full], options);
+
+function toggleFitting(){
+	myPlot.clearSelection();
+	var df = $("#do_fit");
+	var mode = df[0].checked ? "x" : "xy"
+	myPlot.getOptions().selection.mode = mode
+}
+	
